@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'accounts',
     'store',
     'carts',
+    'order'
     
 ]
 
@@ -133,3 +134,10 @@ STATIC_URL = '/static/'
 #media files configuration
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR /'media'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'L.avinash68@gmail.com'
+EMAIL_HOST_PASSWORD = 'hukpdbveiojipvpf'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False

@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
-from carts.models import Cart,CartItem
-from .forms import OrderForm
+from carts.models import CartItem
 from .models import Order
+from .forms import OrderForm
 import datetime
 
 # Create your views here.
@@ -10,8 +10,10 @@ def place_order(request):
     current_user = request.user
     tax = 0
     grand_total = 0
-
-    cart_items = CartItem.objects.filter(user=current_user)
+    total = 0
+    data = Order
+    
+    cart_items = CartItem.objects.filter(user=current_user,is_active=True)
     cart_count = cart_items.count()
     if cart_count <=0:
         redirect('store')
@@ -24,6 +26,7 @@ def place_order(request):
     
     if request.method == 'POST':
         form = OrderForm(request.POST)
+        
         if form.is_valid():
             data = Order()
             data.user = current_user
@@ -52,9 +55,9 @@ def place_order(request):
             data.order_number = current_date + str(data.id)
             data.save()
 
-            Order = Order.objects.get(user = current_user,is_ordered = False)
+            order = Order.objects.get(user = current_user,is_ordered = False)
             context = {
-                 'order':Order,
+                 'order':order,
                  'cart_items':cart_items,
                  'total':total,
                  'tax':tax,
@@ -64,7 +67,9 @@ def place_order(request):
             return render(request,'payments.html',context)
         else:
              return redirect('checkout')
-
+        
+     
+   
             
 
 

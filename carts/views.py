@@ -28,6 +28,13 @@ def add_cart(request,product_id):
                     product_variation.append(variation)
                 except:
                     pass
+    
+    try:
+        cart = Cart.objects.get(cart_id =_cart_id(request))
+    except Cart.DoesNotExist:
+                cart = Cart.objects.create(
+                    cart_id = _cart_id(request)
+                )
 
     if current_user.is_authenticated:            
             is_cart_item_exists = CartItem.objects.filter(product=product, user=current_user).exists()
@@ -56,7 +63,9 @@ def add_cart(request,product_id):
                         item.variation.add(*product_variation)
                     item.save()
             else:
+                cart = Cart.objects.get(cart_id =_cart_id(request))
                 cart_item = CartItem.objects.create(
+                    cart = cart,
                     product = product,
                     quantity = 1,
                     user = current_user,
@@ -68,12 +77,7 @@ def add_cart(request,product_id):
             return redirect('cart')
     # If the user is not authenticated
     else:
-            try:
-                cart = Cart.objects.get(cart_id =_cart_id(request))
-            except Cart.DoesNotExist:
-                cart = Cart.objects.create(
-                    cart_id = _cart_id(request)
-                )
+            
             is_cart_item_exist = CartItem.objects.filter(product=product,cart=cart).exists()
             if is_cart_item_exist:
                     cart_item = CartItem.objects.filter(product = product, cart = cart)

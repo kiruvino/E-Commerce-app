@@ -1,3 +1,7 @@
+.rate{
+    display: inline-block;
+}
+
 .rate > input {
     display : none 
 }
@@ -5,6 +9,8 @@
 .rate > label {
     float:right
 }
+
+
 
 
 /** display start here **/

@@ -71,12 +71,9 @@
     <div class="row">
                 <div class="col-md-9">
     
-        <header class="section-heading">
-            <h3>Customer Reviews </h3>  
-            
-        </header>
-    
-        <form action="" method="POST">
+        
+         {% include 'includes/alerts.html' %}           
+        <form action="{% url 'submit_review' single_product.id %}" method="POST">
             {% csrf_token %}
             <div> 
                <h5> Write your review here </h5>
@@ -94,15 +91,29 @@
                 <input type="radio" name="rating" id="rating3" value="1.5" required > <label for="rating3" title="1.5" class="half"></label>
                 <input type="radio" name="rating" id="rating2" value="1" required > <label for="rating2" title="1"></label>
                 <input type="radio" name="rating" id="rating1" value="0.5" required > <label for="rating1" title="0.5" class="half"></label>
-               </div>
+               </div><br>
                Review Title :
-               <input type="textbox" class="form-control"><br>
+               <input type="textbox" class="form-control" name="subject"><br>
                Review:
-               <textarea rows="10" class="form-control"></textarea><br>
-               <input type="submit" value="Submit" class="btn btn-primary">
+               <textarea rows="10" class="form-control" name="review"></textarea><br>
+               {% if user.is_authenticated %}
+                    {% if order_product %}
+                        <input type="submit" value="Submit Review" class="btn btn-primary">
+                    {% else %}
+                <p> You must purchase this product to post a review </p>
+                    {% endif %}
+               {% else %}
+               <p> You must be logged in to post a review</p><a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+               {% endif %}
             </div>
             <br>
         </form>
+
+        <header class="section-heading">
+            <h3>Customer Reviews </h3>  
+            
+        </header>
+
         <article class="box mb-3">
             <div class="icontext w-100">
                 <img src="./images/avatars/avatar1.jpg" class="img-xs icon rounded-circle">

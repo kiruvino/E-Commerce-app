@@ -64,7 +64,7 @@ def payments(request):
 
        
 
-        #send order completion mail to user
+    '''    #send order completion mail to user
     mail_subject = "DAKart - Your Order is Placed"
     email_from = settings.EMAIL_HOST_USER
     message = render_to_string('order_received.html',{
@@ -74,6 +74,7 @@ def payments(request):
     })
     to_email = [request.user.email,]
     send_mail(mail_subject,message,email_from,to_email)
+    '''
     print(order.order_number)
     print(paymentobject.payment_id)
         #redirect to order complete page

@@ -44,10 +44,16 @@ def product_detail(request,category_url,product_url):
         raise e
     
     order_product = OrderProduct.objects.filter(user__id=request.user.id, product_id=single_product.id).last()
+    #get reviews
+
+    reviews = ReviewRating.objects.filter(product_id = single_product.id, status=True)
+
+
     context={
         'single_product':single_product,
         'in_cart':in_cart,
-        'order_product':order_product
+        'order_product':order_product,
+        'reviews':reviews
     }
 
     

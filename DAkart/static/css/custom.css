@@ -39,6 +39,10 @@ input:checked ~ label, label:hover ~ label {
     color:#ffb503
 }
 
+.user-review i {
+    color:#ffb503 
+}
+
 
 
 

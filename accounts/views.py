@@ -14,6 +14,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from carts.views import _cart_id
 from carts.models import Cart, CartItem
+from order.models import Order
 
 def register(request):
    
@@ -146,7 +147,17 @@ def activate(request,uidb64,token):
 
 
 def dashboard(request):
-     return render(request,'accounts/dashboard.html')
+     orders = Order.objects.filter(user=request.user,is_ordered=True).order_by('-created_at')
+     orders_count = orders.count()
+     context = {
+         'orders_count':orders_count
+     }
+     return render(request,'accounts/dashboard.html',context)
+
+def my_orders(request):
+
+    return render(request,'accounts/my_orders.html')
+
 
 
 

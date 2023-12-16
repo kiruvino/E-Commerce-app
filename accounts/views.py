@@ -1,10 +1,10 @@
 from email.message import EmailMessage
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.http import HttpResponse 
+from django.shortcuts import render, redirect , get_object_or_404
 
 from django.conf import settings
-from .forms import RegistrationForm
-from .models import Account
+from .forms import RegistrationForm, UserForm, UserProfileForm
+from .models import Account, UserProfile
 from django.contrib import messages , auth
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
@@ -14,7 +14,9 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from carts.views import _cart_id
 from carts.models import Cart, CartItem
-from order.models import Order
+from order.models import Order, OrderProduct
+from django.contrib.auth.decorators import login_required
+
 
 def register(request):
    
@@ -154,10 +156,50 @@ def dashboard(request):
      }
      return render(request,'accounts/dashboard.html',context)
 
+@login_required(login_url='login')
 def my_orders(request):
+    orders = Order.objects.filter(user=request.user, is_ordered=True).order_by('-created_at')
+    context = {
+        'orders': orders,
+    }
+    return render(request,'accounts/my_orders.html', context)
 
-    return render(request,'accounts/my_orders.html')
+@login_required(login_url='login')
+def order_detail(request, order_id):
+    order_detail = OrderProduct.objects.filter(order__order_number=order_id)
+    order = Order.objects.get(order_number=order_id)
+    subtotal = 0
+    for i in order_detail:
+        subtotal += i.product_price * i.quantity
 
+    context = {
+        'order_detail': order_detail,
+        'order': order,
+        'subtotal': subtotal,
+    }
+    return render(request, 'order_detail.html', context)
 
+def edit_profile(request):
+    user_profile = None
+    try:
+        user_profile = UserProfile.objects.get(user_id=request.user.id)
+    except:
+        pass
 
+    if request.method == "POST":
+        user_form = UserForm(request.POST,instance=request.user)
+        user_profile_form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        if user_form.is_valid() and user_profile_form.is_valid():
+            user_form.save()
+            user_profile_form.save()
+            messages.success(request, 'Your profile has been updated.')
+            return redirect('edit_profile')
+    else:
+         user_form = UserForm(instance=request.user)
+         profile_form = UserProfileForm(instance=user_profile)
+    context ={
+             'user_form': user_form,
+             'profile_form':profile_form
+         }
+    return render(request, 'accounts/edit_profile.html', context)
 

@@ -137,8 +137,8 @@ MEDIA_ROOT = BASE_DIR /'media'
 
 
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'L.avinash68@gmail.com'
-EMAIL_HOST_PASSWORD = 'oyobdipmjmuugtcs'
+EMAIL_HOST_USER = 'kiruthiga5.vinothkumar@gmail.com'
+EMAIL_HOST_PASSWORD = 'kmsz bfvi wewd mqzh'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False

@@ -26,7 +26,7 @@ SECRET_KEY = 'fwpwvme1l$8!e)(*872dog0@)e-&+a#(2wu$*elbbkwm^d1dgt'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['dakart-env.eba-9q3xyqsr.us-west-2.elasticbeanstalk.com']
 
 
 # Application definition

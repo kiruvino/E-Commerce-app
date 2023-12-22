@@ -26,7 +26,7 @@ SECRET_KEY = 'fwpwvme1l$8!e)(*872dog0@)e-&+a#(2wu$*elbbkwm^d1dgt'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['dakart-env.eba-9q3xyqsr.us-west-2.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['ecomm-env.eba-wy8uvzgx.us-east-1.elasticbeanstalk.com']
 
 
 # Application definition
@@ -85,12 +85,25 @@ WSGI_APPLICATION = 'DAkart.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+
+if 'RDS_DB_NAME' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ['RDS_DB_NAME'],
+            'USER': os.environ['RDS_USERNAME'],
+            'PASSWORD': os.environ['RDS_PASSWORD'],
+            'HOST': os.environ['RDS_HOSTNAME'],
+            'PORT': os.environ['RDS_PORT'],
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation

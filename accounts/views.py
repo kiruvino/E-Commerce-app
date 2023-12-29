@@ -22,7 +22,6 @@ def register(request):
    
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
-        print(request.POST['email'],form.is_valid())
         if form.is_valid():
             
             first_name = form.cleaned_data['first_name']
@@ -54,7 +53,13 @@ def register(request):
             to_email = [email,]
             send_mail(mail_subject,message,email_from,to_email)
             return redirect('/accounts/login?command=verification&email='+email)
-    
+        else:
+            form = RegistrationForm(request.POST)
+            context = {
+                'form': form,
+             }
+            return render(request, 'accounts/register.html', context)
+       
     form = RegistrationForm()
     context = {
                 'form': form,
@@ -157,7 +162,11 @@ def activate(request,uidb64,token):
 def dashboard(request):
      orders = Order.objects.filter(user=request.user,is_ordered=True).order_by('-created_at')
      orders_count = orders.count()
-     userprofile = UserProfile.objects.get(user_id=request.user.id)
+     userprofile = None
+     try:
+         userprofile = UserProfile.objects.get(user_id=request.user.id)
+     except:
+         pass
 
      context = {
          'orders_count':orders_count,
@@ -237,6 +246,73 @@ def change_password(request):
 
 
     return render(request, 'accounts/change_password.html')
+
+def forgotPassword(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+
+        if Account.objects.filter(email=email).exists():
+            user = Account.objects.get(email__exact=email)
+            
+            current_site = get_current_site(request)
+            mail_subject = "Reset your password"
+            email_from = settings.EMAIL_HOST_USER
+            message = render_to_string('accounts/reset_password_email.html',{
+                'user':user,
+                'domain':current_site,
+                'uid':urlsafe_base64_encode(force_bytes(user.pk)),
+                'token':default_token_generator.make_token(user)
+            })
+            to_email = [email,]
+            send_mail(mail_subject,message,email_from,to_email)
+
+            messages.success(request,"password reset link is sent to the mail address")
+            return redirect('login')
+        else:
+            messages.error(request,"Account does not exist for the given email")
+            return redirect('forgotpassword')
+
+    return render(request,'accounts/forgotpassword.html')
+
+def resetpassword_validate(request,uidb64,token):
+    
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = Account._default_manager.get(pk=uid)
+    except(TypeError, ValueError , OverflowError, Account.DoesNotExist):
+         user = None
+    
+    if user is not None and default_token_generator.check_token(user,token):
+        
+        request.session['uid'] = uid
+        messages.success(request,"password reset link is sent to the mail address")
+        return redirect('resetpassword')
+    else:
+        messages.error(request,"Invalid Token, please click forgot password")
+        return redirect('login')
+
+def resetpassword(request):
+    if request.method == 'POST':
+        password = request.POST['password']
+        confirm_password = request.POST['confirm_password']
+
+        if password == confirm_password:
+            uid = request.session.get('uid')
+            user = Account.objects.get(pk = uid)
+            user.set_password(password)
+            user.save()
+            messages.success(request,'password reset successful')
+            return redirect('login')
+        else:
+            messages.error(request,'password do not match')
+            return redirect('resetpassword')
+        
+    return render(request,'accounts/resetpassword.html')
+
+        
+
+
+    
 
 
 

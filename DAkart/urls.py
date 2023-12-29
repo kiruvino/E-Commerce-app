@@ -24,7 +24,7 @@ import store
 from . import views 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('securelogin/', admin.site.urls),
     path('',views.welcome,name='welcome'),
     path('store/',include('store.urls')),
     path('cart/',include('carts.urls')),

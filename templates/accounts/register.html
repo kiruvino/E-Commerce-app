@@ -12,8 +12,15 @@
 		<header class="mb-4"><h4 class="card-title">Sign up</h4></header>
 		<form action="{% url 'register' %}" method="POST">
       		{% csrf_token %}
-      
+			  {% if form.errors %}
 
+			  <div class="alert alert-danger">
+				<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>
+				{{ form.email.errors }}
+				{{ form.non_field_error }}
+			</div>
+			{% endif %}
+  
 
 				<div class="form-row">
 					<div class="col form-group">
@@ -30,7 +37,7 @@
 				<div class="form-row">
 					<div class="form-group col-md-6">
 					  <label>Email Address</label>
-					  {{ form.email.errors }}
+					 
 					  {{form.email}}
 					</div> <!-- form-group end.// -->
 					<div class="form-group col-md-6">

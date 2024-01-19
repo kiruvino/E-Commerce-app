@@ -19,12 +19,11 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
-import store
 
 from . import views 
 
 urlpatterns = [
-    path('securelogin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('',views.welcome,name='welcome'),
     path('store/',include('store.urls')),
     path('cart/',include('carts.urls')),
